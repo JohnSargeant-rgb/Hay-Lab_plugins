@@ -85,6 +85,7 @@ def images_processed(dest):
 
 ## sets up a list of avaialble channels in a stack and viewing options	
 channels_available = current_channels()
+channel_iterator= channels_available[:-1]
 color_options =['Color','Gray', 'HiLo', 'Cyan Hot', 'Magenta Hot', 'mpl-viridis', 'mpl-plasma']
 zoom =['-4','-3','-2','-1','  0','1','2','3','4']
 italicFont = Font("SansSerif", Font.BOLD,15)
@@ -546,10 +547,11 @@ while exit_loop ==0:
 	##defines the golgi and background at this point. 
 	background = low()
 	if mean_max_det is True:
+		cell_area = IJ.getValue(imp,"Area")
 		bck_int = []
 		mean_int =[]
 		maximum_int = []
-		for channel in mean_max_channels():
+		for channel in channel_iterator:
 			channel_first = int(channel)
 			IJ.setSlice(channel_first)
 			##Data Collection
@@ -716,17 +718,17 @@ while exit_loop ==0:
 	IJ.run("Select None")
 
 	if mean_max_det is True:
-		if len(bck_int) <2:
+		while len(bck_int) <4:
 			bck_int.append(0)
 			mean_int.append(0)
 			maximum_int.append(0)
-		headers = ['Cell','ch1_Background', 'ch1_avg', "ch1_Maximum",'ch2_Background','ch2_avg', 'ch2_Maximum', "Image_title"]
+		headers = ['Cell','Cell Area','ch1_Background', 'ch1_avg', "ch1_Maximum",'ch2_Background','ch2_avg', 'ch2_Maximum','ch3_Background', 'ch3_avg', "ch3_Maximum",'ch4_Background', 'ch4_avg', "ch4_Maximum", "Image_title"]
 		with open(Quant_MM, 'ab') as f_output_1:
 			csv_output = csv.DictWriter(f_output_1, fieldnames =headers)
 			f_output_1.seek(0,2)
 			if f_output_1.tell() ==0:
 				csv_output.writeheader()
-   			csv_output.writerow({'Cell':number,'ch1_Background': bck_int[0], 'ch1_avg': mean_int[0], 'ch1_Maximum': maximum_int[0],'ch2_Background':bck_int[1], 'ch2_avg':mean_int[1],'ch2_Maximum':maximum_int[1], 'Image_title':image_name})  
+   			csv_output.writerow({'Cell':number, 'Cell Area':cell_area,'ch1_Background': bck_int[0], 'ch1_avg': mean_int[0], 'ch1_Maximum': maximum_int[0],'ch2_Background':bck_int[1], 'ch2_avg':mean_int[1],'ch2_Maximum':maximum_int[1],'ch3_Background': bck_int[2], 'ch3_avg': mean_int[2], 'ch3_Maximum': maximum_int[2],'ch4_Background': bck_int[3], 'ch4_avg': mean_int[3], 'ch4_Maximum': maximum_int[3], 'Image_title':image_name})  
 	else:
 		pass
 
