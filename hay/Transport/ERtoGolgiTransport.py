@@ -161,7 +161,7 @@ except:
 
 # sets up a generic dialog box to start the script.
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("Transport Assay")
+gdp = GenericDialogPlus("Transport Assay, Version 3.2")
 gdp.addDirectoryField("Image Folder:", dest, 40)
 gdp.addStringField("Processed Image Folder:", ProFolder_def, 40)
 gdp.addStringField("Transport Output:", Quant_def, 40)
