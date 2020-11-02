@@ -161,7 +161,7 @@ except:
 
 # sets up a generic dialog box to start the script.
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("Transport Assay, Version 3.2")
+gdp = GenericDialogPlus("Transport Assay, Version 3.3")
 gdp.addDirectoryField("Image Folder:", dest, 40)
 gdp.addStringField("Processed Image Folder:", ProFolder_def, 40)
 gdp.addStringField("Transport Output:", Quant_def, 40)
@@ -657,15 +657,13 @@ while exit_loop == 0:
 
     # set more variables
     ER = []
-    x_y = {}
 
-    # merges the x and y lists such that x,y are key:value pairs
-    for x, y in zip(all_x, all_y):
-        x_y.setdefault(x, []).append(y)
+    # merges the x and y lists such that x,y are  pairs in a list
+    x_y = list(zip(all_x, all_y))
     # loops through x,y coordinate pairs, draw a circle and measures the average intensity.
-    for x, y in x_y.items():
+    for x, y in x_y:
         x = (int(x))
-        y = (int(y[0]))
+        y = (int(y))
         new_x = int(x) - radius
         new_y = int(y) - radius
         imp = IJ.getImage()
@@ -765,7 +763,6 @@ while exit_loop == 0:
     current_image = image_name
     getOptions(dest)
 
-	
 
 
 	
