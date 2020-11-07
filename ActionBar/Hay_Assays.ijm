@@ -30,5 +30,12 @@ icon=Hay_Assays/image4_1.png
 arg=run("V1 derandomizer");
 
 </macro>
+<button> 5 line 1
+label=FRET_FURA
+icon=Hay_Assays/image5_1.png
+
+arg=run("V1 ff");
+
+</macro>
 </line>
 // end of file
