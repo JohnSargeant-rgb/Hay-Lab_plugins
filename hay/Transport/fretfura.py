@@ -16,8 +16,8 @@ import time
 
 boldFont = Font("SansSerif", Font.BOLD, 13)
 fret_fura = []
-fret_fura.append("C1/C2 (FRET)")
-fret_fura.append("C2/C1 (FURA)")
+fret_fura.append("C1/C2 (FURA)")
+fret_fura.append("C2/C1 (FRET)")
 dest = IJ.getDirectory("image")
 gdp = GenericDialogPlus("FRET Assay, Version 3.1")
 gdp.addDirectoryField("Output Location:", dest, 40)
@@ -26,7 +26,7 @@ gdp.addStringField("FRET Outfile:", 'FRET_Outfile.csv', 40)
 gdp.addStringField("Selection Radius:", '3', 10)
 gdp.addStringField("Acquisition delay (sec):", '4', 10)
 
-gdp.addRadioButtonGroup("", fret_fura, 1, 2, "C1/C2 (FRET)")
+gdp.addRadioButtonGroup("", fret_fura, 1, 2, "C1/C2 (FURA)")
 gdp.addCheckbox("Set Background to value:", False)
 gdp.addToSameRow()
 gdp.addStringField("", '0', 5)
