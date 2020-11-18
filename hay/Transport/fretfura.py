@@ -19,19 +19,19 @@ fret_fura = []
 fret_fura.append("C1/C2 (FURA)")
 fret_fura.append("C2/C1 (FRET)")
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("FRET Assay, Version 3.1")
+gdp = GenericDialogPlus("FRET Assay, Version 3.2")
 gdp.addDirectoryField("Output Location:", dest, 40)
 gdp.addStringField("Processed Folder:", 'Processed_FRET', 40)
 gdp.addStringField("FRET Outfile:", 'FRET_Outfile.csv', 40)
 gdp.addStringField("Selection Radius:", '3', 10)
-gdp.addStringField("Imaging Interval (sec):", '4', 10)
+gdp.addStringField("Image interval (sec):", '4', 10)
 
 gdp.addRadioButtonGroup("", fret_fura, 1, 2, "C1/C2 (FURA)")
 gdp.addCheckbox("Set Background to value:", False)
 gdp.addToSameRow()
 gdp.addStringField("", '0', 5)
 
-gdp.addCheckbox("Blur Image? Input sigma value:", False)
+gdp.addCheckbox("Apply Gaussian blur? Input sigma value:", False)
 gdp.addToSameRow()
 gdp.addStringField("", '4', 5)
 gdp.addMessage(" ")
@@ -156,7 +156,9 @@ if back_state == False:
     IJ.setTool("oval")
     region = "Select Background"
     selection(region)
-    background_c1, background_c2 = background_assay()
+    imp=IJ.getImage()
+    roi_bck = imp.getRoi()
+    #background_c1, background_c2 = background_assay()
 if back_state == True:
     # sets background to value
     zero_bck = []
@@ -164,7 +166,6 @@ if back_state == True:
         zero_bck.append(back_val)
     background_c1 = zero_bck
     background_c2 = zero_bck
-
 
 # ok we can now access these variables.
 
@@ -193,7 +194,6 @@ except AttributeError as error:
     nbgd = NonBlockingGenericDialog("Select some cells boi")
     nbgd.showDialog()
 if blur_state == True:
-
     set_sigma = "sigma="+str(blur_val)+" stack"
     IJ.run("Gaussian Blur...", set_sigma)
 path = os.chdir(dest)
@@ -211,6 +211,10 @@ else:
 
 fret_csv = Path+'/'+Procsv
 
+
+if back_state == False:
+	imp.setRoi(roi_bck)
+	background_c1, background_c2 = background_assay()
 
 all_x = []
 all_y = []
@@ -258,9 +262,9 @@ for x, y in x_y:
             if len(cell_channel_2) == r_end:
                 Tch2_8 = [cell_channel_2[i] - bckc2[i] for i in range(len(cell_channel_2))]
                 cell_channel_2 = []
-                if f_f == "C1/C2 (FRET)":
+                if f_f == "C1/C2 (FURA)":
                     c2_c1 = [Tch1_8[i] / Tch2_8[i] for i in range(len(Tch2_8))]
-                if f_f == "C2/C1 (FURA)":
+                if f_f == "C2/C1 (FRET)":
                     c2_c1 = [Tch2_8[i] / Tch1_8[i] for i in range(len(Tch2_8))]
                 x = sum(c2_c1[r_start:r_end])/len(c2_c1[r_start:r_end])
                 r0.append(x)
@@ -309,10 +313,10 @@ for j in timepoint_list:
         cell_mean_c2 = (selection_mean())
         cell_mean_c2 = cell_mean_c2 - background_c2[j-1]
         cell.append(cell_mean_c2)
-        if f_f == "C1/C2 (FRET)":
+        if f_f == "C1/C2 (FURA)":
             c1overc2 = cell_mean_c1/cell_mean_c2
-        if f_f == "C2/C1 (FURA)":
-            c1overc2 = cell_mean_c2/cell_mean_c1
+        if f_f == "C2/C1 (FRET)":
+        	c1overc2 = cell_mean_c2/cell_mean_c1
         r_r0 = c1overc2/r0[count-1]
         cell.append(c1overc2)
         cell.append(r_r0)
