@@ -19,13 +19,13 @@ fret_fura = []
 fret_fura.append("C1/C2 (FURA)")
 fret_fura.append("C2/C1 (FRET)")
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("FRET Assay, Version 3.2")
+gdp = GenericDialogPlus("FRET Assay, Version 3.3")
 gdp.addDirectoryField("Output Location:", dest, 40)
 gdp.addStringField("Processed Folder:", 'Processed_FRET', 40)
 gdp.addStringField("FRET Outfile:", 'FRET_Outfile.csv', 40)
 gdp.addStringField("Selection Radius:", '3', 10)
 gdp.addStringField("Image interval (sec):", '4', 10)
-
+gdp.addStringField("ZeroDivisionErorVal:", 'NA', 10)
 gdp.addRadioButtonGroup("", fret_fura, 1, 2, "C1/C2 (FURA)")
 gdp.addCheckbox("Set Background to value:", False)
 gdp.addToSameRow()
@@ -53,6 +53,7 @@ if gdp.wasOKed():
     Procsv = gdp.getNextString().strip()
     radius = int(gdp.getNextString().strip())
     interval = int(gdp.getNextString().strip())
+    errorval = gdp.getNextString().strip()
     f_f = gdp.getNextRadioButton()
     back_state = gdp.getNextBoolean()
     back_val = int(gdp.getNextString().strip())
@@ -69,6 +70,10 @@ if gdp.wasOKed():
 imp_save = IJ.getImage()
 Save_Title = imp_save.getTitle()
 
+try:
+	erroval=int(errorval)
+except ValueError:
+	errorval= errorval
 
 ###
 def selection(region):
@@ -263,9 +268,21 @@ for x, y in x_y:
                 Tch2_8 = [cell_channel_2[i] - bckc2[i] for i in range(len(cell_channel_2))]
                 cell_channel_2 = []
                 if f_f == "C1/C2 (FURA)":
-                    c2_c1 = [Tch1_8[i] / Tch2_8[i] for i in range(len(Tch2_8))]
+                	c2_c1=[]
+                	for i in range(len(Tch2_8)):
+                		try:
+                			x=Tch1_8[i] / Tch2_8[i]
+                		except:
+                			pass
+                		c2_c1.append(x)
                 if f_f == "C2/C1 (FRET)":
-                    c2_c1 = [Tch2_8[i] / Tch1_8[i] for i in range(len(Tch2_8))]
+                	c2_c1=[]
+                	for i in range(len(Tch2_8)):
+                		try:
+                			x=Tch2_8[i] / Tch1_8[i]
+                		except:
+                			pass
+                		c2_c1.append(x)
                 x = sum(c2_c1[r_start:r_end])/len(c2_c1[r_start:r_end])
                 r0.append(x)
 
@@ -314,12 +331,28 @@ for j in timepoint_list:
         cell_mean_c2 = cell_mean_c2 - background_c2[j-1]
         cell.append(cell_mean_c2)
         if f_f == "C1/C2 (FURA)":
-            c1overc2 = cell_mean_c1/cell_mean_c2
+        	try:
+        		c1overc2 = cell_mean_c1/cell_mean_c2
+        		r_r0 = c1overc2/r0[count-1]
+        		cell.append(c1overc2)
+        		cell.append(r_r0)
+        	except ZeroDivisionError:
+        		c1overc2 = errorval
+        		r_r0 = errorval
+        		cell.append(c1overc2)
+        		cell.append(r_r0)
         if f_f == "C2/C1 (FRET)":
-        	c1overc2 = cell_mean_c2/cell_mean_c1
-        r_r0 = c1overc2/r0[count-1]
-        cell.append(c1overc2)
-        cell.append(r_r0)
+        	try:
+        		c1overc2 = cell_mean_c2/cell_mean_c1
+        		r_r0 = c1overc2/r0[count-1]
+        		cell.append(c1overc2)
+        		cell.append(r_r0)
+        	except ZeroDivisionError:
+        		print("got an exception")
+        		c1overc2 = errorval
+        		r_r0 = errorval
+        		cell.append(c1overc2)
+        		cell.append(r_r0)
         imp.setC(1)
     with open(fret_csv, 'ab') as myfile:
         cell.insert(0, background_c2[bck_count])
