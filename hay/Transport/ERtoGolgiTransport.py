@@ -1,7 +1,7 @@
 from __future__ import division
 from ij import IJ, ImagePlus, ImageStack
 from ij.process import FloatProcessor, ImageProcessor
-from ij.gui import Roi, PolygonRoi, GenericDialog, TextRoi, NonBlockingGenericDialog, PointRoi, OvalRoi, Overlay
+from ij.gui import Roi, PolygonRoi, GenericDialog, TextRoi, NonBlockingGenericDialog, PointRoi, OvalRoi, Overlay, ImageWindow
 import re
 from java.awt import Color, Font
 import sys
@@ -12,12 +12,20 @@ from loci.formats import ChannelSeparator
 from ij.io import Opener
 import json
 
-
+version = "Version 3.4"
 json_selected = "json_selected.json"
 
 # switches to a grayscale viewing mode
-imp = IJ.getImage()
-imp.setDisplayMode(IJ.GRAYSCALE)
+try:
+	imp = IJ.getImage()
+	imp.setDisplayMode(IJ.GRAYSCALE)
+except:
+	gd=GenericDialog(version)
+	gd.addMessage("Open an image to start")
+	gd.hideCancelButton()
+	gd.showDialog()
+	if gd.wasOKed():
+		sys.exit()
 
 
 def file_opener(current_title, extension):
@@ -115,6 +123,10 @@ try:
     golgi_select_def = json_object['golgi_select_def']
     auto_golgi_def = json_object['auto_golgi_def']
     mean_max_def = json_object['mean_max_def']
+    man_bck_def =json_object['man_bck_def']
+    auto_pos_def =json_object['auto_pos_def']
+    xpos_def=json_object['xpos_def']
+    ypos_def=json_object['ypos_def']
     file_def = json_object['file_def']
 
 
@@ -133,6 +145,10 @@ except:
         'golgi_select_def': False,
         'auto_golgi_def': False,
         'mean_max_def': False,
+        'man_bck_def':False,
+        'auto_pos_def': False,
+        'xpos_def':'0',
+        'ypos_def':'80',
         'file_def': '.tif'
     }
     ProFolder_def = default_values['ProFolder_def']
@@ -147,6 +163,10 @@ except:
     golgi_select_def = default_values['golgi_select_def']
     auto_golgi_def = default_values['auto_golgi_def']
     mean_max_def = default_values['mean_max_def']
+    man_bck_def =default_values['man_bck_def']
+    auto_pos_def =default_values['auto_pos_def']
+    xpos_def=default_values['xpos_def']
+    ypos_def=default_values['ypos_def']
     file_def = default_values['file_def']
     # Dumps values into a dictionary
     json_object = json.dumps(default_values, indent=4)
@@ -161,12 +181,12 @@ except:
 
 # sets up a generic dialog box to start the script.
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("Transport Assay, Version 3.3")
+gdp = GenericDialogPlus("Transport Assay - "+version)
 gdp.addDirectoryField("Image Folder:", dest, 40)
 gdp.addStringField("Processed Image Folder:", ProFolder_def, 40)
 gdp.addStringField("Transport Output:", Quant_def, 40)
 gdp.addStringField("Mean_Max Output:", Quant_MM_def, 40)
-gdp.addMessage("    ", italicFont)
+gdp.addMessage("------------------------------------------------------------", italicFont)
 gdp.addChoice("Transport Channel:", channels_available, tran_def)
 gdp.addToSameRow()
 gdp.addStringField("File Type: ", file_def, 5)
@@ -180,17 +200,24 @@ gdp.addChoice(" Zoom: ", zoom, zoom_def)
 gdp.addToSameRow()
 gdp.addStringField("ER Selection Radius: ", radius_def, 5)
 gdp.addChoice("View Mode:", color_options, color_def)
-gdp.addMessage("    ", italicFont)
-gdp.addMessage("  Advanced: ", italicFont)
+gdp.addMessage("------------------------------------------------------------", italicFont)
+gdp.addMessage("  Advanced Options: ", italicFont)
 gdp.addCheckbox("Always Select Golgi", golgi_select_def)
 gdp.addToSameRow()
 gdp.addCheckbox("Always Auto-Detect Golgi", auto_golgi_def)
 gdp.addCheckbox("Mean_Max Detection", mean_max_def)
-gdp.addMessage("    ", italicFont)
+gdp.addToSameRow()
+gdp.addCheckbox("Manual Background Selection", man_bck_def)
+gdp.addCheckbox("Auto Position Image Window (position x,y):", auto_pos_def)
+
+gdp.addStringField("x: ", xpos_def, 2)
+
+gdp.addStringField("y: ", ypos_def, 2)
+gdp.addMessage("------------------------------------------------------------", italicFont)
 progress = images_processed(dest)
 gdp.addMessage(str(progress[0])+'% Images Assayed' + ' ' +
                '(' + str(progress[2]) + '/' + str(progress[1]) + ')', italicFont)
-gdp.addHelp("https://github.com/JohnSargeant-rgb?tab=projects")
+gdp.addHelp("https://github.com/JohnSargeant-rbg?tab=projects")
 gdp.showDialog()
 if gdp.wasOKed():
     dest = gdp.getNextString().strip()
@@ -207,6 +234,10 @@ if gdp.wasOKed():
     always_select = gdp.getNextBoolean()
     always_auto = gdp.getNextBoolean()
     mean_max_det = gdp.getNextBoolean()
+    man_bck_det=gdp.getNextBoolean()
+    auto_pos_det=gdp.getNextBoolean()
+    xpos_det=gdp.getNextString().strip()
+    ypos_det=gdp.getNextString().strip()
 
     new_selected_values = {
         "ProFolder_def": ProFolder,
@@ -221,7 +252,11 @@ if gdp.wasOKed():
         "color_def": color_scale,
         "golgi_select_def": always_select,
         "auto_golgi_def": always_auto,
-        "mean_max_def": mean_max_det
+        "mean_max_def": mean_max_det,
+        "man_bck_def": man_bck_det,
+        "auto_pos_def":auto_pos_det,
+        "xpos_det":xpos_def,
+        "ypos_det":ypos_def,
 
     }
     # save selected values as defaults.
@@ -239,15 +274,6 @@ if gdp.wasOKed():
 else:
     exit()
 
-
-###Variables Collected:##
-# file_type
-# dest
-# radius
-# transport_c
-# golgi_c
-# zoom_to
-# extension
 
 
 def getOptions(dest):
@@ -277,6 +303,10 @@ def getOptions(dest):
         imp = IJ.getImage()
         imp.setDisplayMode(IJ.GRAYSCALE)
         colorscale()
+        imp=IJ.getImage()
+        win=imp.getWindow()
+        win.maximize()
+        win.setLocation(0,80)
         getOptions(dest)
 
 
@@ -529,6 +559,9 @@ exit_loop = 0
 while exit_loop == 0:
     if firstpass is True:
         current_image = "first_image"
+        win=imp.getWindow()
+        win.maximize()
+        win.setLocation(int(xpos_det),int(ypos_det))
         getOptions(dest)
     else:
         pass
@@ -537,17 +570,17 @@ while exit_loop == 0:
 
     imp = IJ.getImage()
     image_name = imp.title
-
     bit_depth = bit_tester(image_name)
     colorscale()
 
     #set a manual background value#
-    if current_image != image_name:
-        IJ.setTool("oval")
-        region = "Select Background"
-        selection(region)
-        to_transport_channel()
-        background = selection_mean()
+    if man_bck_det is True:
+    	if current_image != image_name:
+        	IJ.setTool("oval")
+        	region = "Select Background"
+        	selection(region)
+        	to_transport_channel()
+        	background = selection_mean()
 
     if mean_max_det is True:
         IJ.setTool("polygon")
@@ -685,7 +718,7 @@ while exit_loop == 0:
     gd.addStringField("Cell number", str(cell_number))
     gd.showDialog()
     number = gd.getNextString()
-
+ 
     ER1 = ER[0]
     ER2 = ER[1]
     ER3 = ER[2]
@@ -698,7 +731,9 @@ while exit_loop == 0:
     except:
         net_golgi = 'Pixels saturated in Transport Channel'
         t_index = 'Pixels saturated in Transport Channel'
-
+	##mean max calculations
+	mean_int = [ai - bi for ai, bi in zip(mean_int, bck_int)]
+	max_int = [ai - bi for ai, bi in zip(max_int, bck_int)]
     # saves image with cell number extension.
     imp_save = IJ.getImage()
     path = os.chdir(dest)
