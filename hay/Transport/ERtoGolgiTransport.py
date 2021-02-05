@@ -217,7 +217,7 @@ gdp.addMessage("------------------------------------------------------------", i
 progress = images_processed(dest)
 gdp.addMessage(str(progress[0])+'% Images Assayed' + ' ' +
                '(' + str(progress[2]) + '/' + str(progress[1]) + ')', italicFont)
-gdp.addHelp("https://github.com/JohnSargeant-rbg?tab=projects")
+gdp.addHelp("https://github.com/JohnSargeant-rgb")
 gdp.showDialog()
 if gdp.wasOKed():
     dest = gdp.getNextString().strip()
