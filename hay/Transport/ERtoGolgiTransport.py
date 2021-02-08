@@ -255,8 +255,8 @@ if gdp.wasOKed():
         "mean_max_def": mean_max_det,
         "man_bck_def": man_bck_det,
         "auto_pos_def":auto_pos_det,
-        "xpos_det":xpos_def,
-        "ypos_det":ypos_def,
+        "xpos_def":xpos_det,
+        "ypos_def":ypos_det,
 
     }
     # save selected values as defaults.
