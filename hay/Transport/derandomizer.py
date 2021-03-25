@@ -10,7 +10,7 @@ gdp.addFileField("Data file :", " ")
 gdp.addDirectoryField("Derandomized path", "(optional)")
 gdp.addDirectoryField("Processed Image Folder", " ")
 gdp.addCheckbox("Derandomize Data File", True)
-gdp.addCheckbox("Derandomize Image File", False)
+gdp.addCheckbox("Derandomize Image Folder", False)
 
 gdp.showDialog()
 if gdp.wasOKed():
