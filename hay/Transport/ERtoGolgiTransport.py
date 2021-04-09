@@ -12,20 +12,20 @@ from loci.formats import ChannelSeparator
 from ij.io import Opener
 import json
 
-version = "Version 3.4"
+version = "Version 3.41"
 json_selected = "json_selected.json"
 
 # switches to a grayscale viewing mode
 try:
-	imp = IJ.getImage()
-	imp.setDisplayMode(IJ.GRAYSCALE)
+    imp = IJ.getImage()
+    imp.setDisplayMode(IJ.GRAYSCALE)
 except:
-	gd=GenericDialog(version)
-	gd.addMessage("Open an image to start")
-	gd.hideCancelButton()
-	gd.showDialog()
-	if gd.wasOKed():
-		sys.exit()
+    gd = GenericDialog(version)
+    gd.addMessage("Open an image to start")
+    gd.hideCancelButton()
+    gd.showDialog()
+    if gd.wasOKed():
+        sys.exit()
 
 
 def file_opener(current_title, extension):
@@ -123,10 +123,10 @@ try:
     golgi_select_def = json_object['golgi_select_def']
     auto_golgi_def = json_object['auto_golgi_def']
     mean_max_def = json_object['mean_max_def']
-    man_bck_def =json_object['man_bck_def']
-    auto_pos_def =json_object['auto_pos_def']
-    xpos_def=json_object['xpos_def']
-    ypos_def=json_object['ypos_def']
+    man_bck_def = json_object['man_bck_def']
+    auto_pos_def = json_object['auto_pos_def']
+    xpos_def = json_object['xpos_def']
+    ypos_def = json_object['ypos_def']
     file_def = json_object['file_def']
 
 
@@ -145,10 +145,10 @@ except:
         'golgi_select_def': False,
         'auto_golgi_def': False,
         'mean_max_def': False,
-        'man_bck_def':False,
+        'man_bck_def': False,
         'auto_pos_def': False,
-        'xpos_def':'0',
-        'ypos_def':'80',
+        'xpos_def': '0',
+        'ypos_def': '80',
         'file_def': '.tif'
     }
     ProFolder_def = default_values['ProFolder_def']
@@ -163,10 +163,10 @@ except:
     golgi_select_def = default_values['golgi_select_def']
     auto_golgi_def = default_values['auto_golgi_def']
     mean_max_def = default_values['mean_max_def']
-    man_bck_def =default_values['man_bck_def']
-    auto_pos_def =default_values['auto_pos_def']
-    xpos_def=default_values['xpos_def']
-    ypos_def=default_values['ypos_def']
+    man_bck_def = default_values['man_bck_def']
+    auto_pos_def = default_values['auto_pos_def']
+    xpos_def = default_values['xpos_def']
+    ypos_def = default_values['ypos_def']
     file_def = default_values['file_def']
     # Dumps values into a dictionary
     json_object = json.dumps(default_values, indent=4)
@@ -210,9 +210,9 @@ gdp.addToSameRow()
 gdp.addCheckbox("Manual Background Selection", man_bck_def)
 gdp.addCheckbox("Auto Position Image Window (position x,y):", auto_pos_def)
 
-gdp.addStringField("x: ", xpos_def, 2)
+gdp.addStringField("x: ", xpos_def, 5)
 
-gdp.addStringField("y: ", ypos_def, 2)
+gdp.addStringField("y: ", ypos_def, 5)
 gdp.addMessage("------------------------------------------------------------", italicFont)
 progress = images_processed(dest)
 gdp.addMessage(str(progress[0])+'% Images Assayed' + ' ' +
@@ -234,10 +234,10 @@ if gdp.wasOKed():
     always_select = gdp.getNextBoolean()
     always_auto = gdp.getNextBoolean()
     mean_max_det = gdp.getNextBoolean()
-    man_bck_det=gdp.getNextBoolean()
-    auto_pos_det=gdp.getNextBoolean()
-    xpos_det=gdp.getNextString().strip()
-    ypos_det=gdp.getNextString().strip()
+    man_bck_det = gdp.getNextBoolean()
+    auto_pos_det = gdp.getNextBoolean()
+    xpos_det = gdp.getNextString().strip()
+    ypos_det = gdp.getNextString().strip()
 
     new_selected_values = {
         "ProFolder_def": ProFolder,
@@ -254,9 +254,9 @@ if gdp.wasOKed():
         "auto_golgi_def": always_auto,
         "mean_max_def": mean_max_det,
         "man_bck_def": man_bck_det,
-        "auto_pos_def":auto_pos_det,
-        "xpos_def":xpos_det,
-        "ypos_def":ypos_det,
+        "auto_pos_def": auto_pos_det,
+        "xpos_def": xpos_det,
+        "ypos_def": ypos_det,
 
     }
     # save selected values as defaults.
@@ -273,7 +273,6 @@ if gdp.wasOKed():
     firstpass = True
 else:
     exit()
-
 
 
 def getOptions(dest):
@@ -303,10 +302,10 @@ def getOptions(dest):
         imp = IJ.getImage()
         imp.setDisplayMode(IJ.GRAYSCALE)
         colorscale()
-        imp=IJ.getImage()
-        win=imp.getWindow()
+        imp = IJ.getImage()
+        win = imp.getWindow()
         win.maximize()
-        win.setLocation(0,80)
+        win.setLocation(int(xpos_def), int(ypos_def))
         getOptions(dest)
 
 
@@ -559,9 +558,9 @@ exit_loop = 0
 while exit_loop == 0:
     if firstpass is True:
         current_image = "first_image"
-        win=imp.getWindow()
+        win = imp.getWindow()
         win.maximize()
-        win.setLocation(int(xpos_det),int(ypos_det))
+        win.setLocation(int(xpos_det), int(ypos_det))
         getOptions(dest)
     else:
         pass
@@ -575,12 +574,12 @@ while exit_loop == 0:
 
     #set a manual background value#
     if man_bck_det is True:
-    	if current_image != image_name:
-        	IJ.setTool("oval")
-        	region = "Select Background"
-        	selection(region)
-        	to_transport_channel()
-        	background = selection_mean()
+        if current_image != image_name:
+            IJ.setTool("oval")
+            region = "Select Background"
+            selection(region)
+            to_transport_channel()
+            background = selection_mean()
 
     if mean_max_det is True:
         IJ.setTool("polygon")
@@ -718,7 +717,7 @@ while exit_loop == 0:
     gd.addStringField("Cell number", str(cell_number))
     gd.showDialog()
     number = gd.getNextString()
- 
+
     ER1 = ER[0]
     ER2 = ER[1]
     ER3 = ER[2]
@@ -731,9 +730,9 @@ while exit_loop == 0:
     except:
         net_golgi = 'Pixels saturated in Transport Channel'
         t_index = 'Pixels saturated in Transport Channel'
-	##mean max calculations
-	mean_int = [ai - bi for ai, bi in zip(mean_int, bck_int)]
-	max_int = [ai - bi for ai, bi in zip(max_int, bck_int)]
+        # mean max calculations
+        mean_int = [ai - bi for ai, bi in zip(mean_int, bck_int)]
+        max_int = [ai - bi for ai, bi in zip(max_int, bck_int)]
     # saves image with cell number extension.
     imp_save = IJ.getImage()
     path = os.chdir(dest)
@@ -797,11 +796,3 @@ while exit_loop == 0:
                              'ER2': ER2, 'ER3': ER3, 'net_ER': net_ER, 'net_golgi': net_golgi, 'T_Index': t_index, 'Image_title': image_name})
     current_image = image_name
     getOptions(dest)
-
-
-
-	
-		
-		
-
-	
