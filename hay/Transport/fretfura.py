@@ -1,3 +1,5 @@
+
+  
 from __future__ import division
 from ij import IJ, ImagePlus, ImageStack
 from ij.process import FloatProcessor, ImageProcessor
@@ -19,7 +21,8 @@ fret_fura = []
 fret_fura.append("C1/C2 (FURA)")
 fret_fura.append("C2/C1 (FRET)")
 dest = IJ.getDirectory("image")
-gdp = GenericDialogPlus("FRET Assay, Version 3.3")
+bck_path='optional'
+gdp = GenericDialogPlus("FRET Assay, Version 3.4")
 gdp.addDirectoryField("Output Location:", dest, 40)
 gdp.addStringField("Processed Folder:", 'Processed_FRET', 40)
 gdp.addStringField("FRET Outfile:", 'FRET_Outfile.csv', 40)
@@ -27,7 +30,8 @@ gdp.addStringField("Selection Radius:", '3', 10)
 gdp.addStringField("Image interval (sec):", '4', 10)
 gdp.addStringField("ZeroDivisionErorVal:", 'NA', 10)
 gdp.addRadioButtonGroup("", fret_fura, 1, 2, "C1/C2 (FURA)")
-gdp.addCheckbox("Set Background to value:", False)
+#gdp.addCheckbox("Set Background to value:", False)
+gdp.addFileField("background file:",bck_path , 40)
 gdp.addToSameRow()
 gdp.addStringField("", '0', 5)
 
@@ -55,7 +59,7 @@ if gdp.wasOKed():
     interval = int(gdp.getNextString().strip())
     errorval = gdp.getNextString().strip()
     f_f = gdp.getNextRadioButton()
-    back_state = gdp.getNextBoolean()
+    back_state = gdp.getNextString().strip()
     back_val = int(gdp.getNextString().strip())
     blur_state = gdp.getNextBoolean()
     blur_val = int(gdp.getNextString().strip())
@@ -157,20 +161,21 @@ def background_assay():
 
 background_c1 = []
 background_c2 = []
-if back_state == False:
-    IJ.setTool("oval")
-    region = "Select Background"
-    selection(region)
-    imp=IJ.getImage()
-    roi_bck = imp.getRoi()
-    #background_c1, background_c2 = background_assay()
-if back_state == True:
-    # sets background to value
-    zero_bck = []
-    for i in range(1, all_time+1):
-        zero_bck.append(back_val)
-    background_c1 = zero_bck
-    background_c2 = zero_bck
+if back_state == 'optional':
+	print("optional")
+	IJ.setTool("oval")
+	region = "Select Background"
+	selection(region)
+	imp=IJ.getImage()
+	roi_bck = imp.getRoi()
+	background_c1, background_c2 = background_assay()
+if back_state != 'optional':
+	print("not Optional")
+	with open(back_state, 'r') as csvfile:
+		csvreader = csv.reader(csvfile)
+		for row in csvreader:
+			background_c1.append(float(row[0]))
+			background_c2.append(float(row[1]))
 
 # ok we can now access these variables.
 
