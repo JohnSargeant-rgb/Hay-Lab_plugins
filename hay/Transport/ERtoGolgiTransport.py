@@ -12,7 +12,7 @@ from loci.formats import ChannelSeparator
 from ij.io import Opener
 import json
 
-version = "Version 3.41"
+version = "Version 3.42"
 json_selected = "json_selected.json"
 
 # switches to a grayscale viewing mode
@@ -593,15 +593,21 @@ while exit_loop == 0:
     selection(region)
     IJ.run("Duplicate...", "duplicate")
     zoom()
-    background_auto = 0
 
+    
+    background_auto = 0
     # defines the golgi and background at this point.
-    try:
-        background
-    except NameError:
-        background = low()
+    if man_bck_det is True:
+    	background_auto = low()
     else:
-        background_auto = low()
+    	background= low()
+    	
+    #try:
+    #    background
+    #except NameError:
+    #    background = low()
+    #else:
+    #    background_auto = low()
 
     if mean_max_det is True:
         cell_area = IJ.getValue(imp, "Area")
