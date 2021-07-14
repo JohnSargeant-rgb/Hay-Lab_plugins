@@ -798,7 +798,7 @@ while exit_loop == 0:
         	csv_output.writerow({'Cell': number, 'Cell Area': cell_area, 'ch1_Background': bck_int[0], 'ch1_avg': mean_int[0], 'ch1_Maximum': maximum_int[0], 'ch2_Background': bck_int[1], 'ch2_avg': mean_int[1], 'ch2_Maximum': maximum_int[
                                 1], 'ch3_Background': bck_int[2], 'ch3_avg': mean_int[2], 'ch3_Maximum': maximum_int[2], 'ch4_Background': bck_int[3], 'ch4_avg': mean_int[3], 'ch4_Maximum': maximum_int[3], 'Image_title': image_name})
         	if man_bck_det is True: 
-        		bck_int.pop()
+        		bck_int.remove(0)
         	
     else:
         pass
