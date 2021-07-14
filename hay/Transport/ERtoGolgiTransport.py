@@ -12,7 +12,7 @@ from loci.formats import ChannelSeparator
 from ij.io import Opener
 import json
 
-version = "Version 3.42"
+version = "Version 3.43"
 json_selected = "json_selected.json"
 
 # switches to a grayscale viewing mode
@@ -579,7 +579,13 @@ while exit_loop == 0:
             region = "Select Background"
             selection(region)
             to_transport_channel()
-            background = selection_mean()
+            man_bck_list=[]
+            for channel in channel_iterator:
+            	channel_first = int(channel)
+            	IJ.setSlice(channel_first)
+            	man_bck_list.append(selection_mean())
+           	background = man_bck_list[0]
+           	to_transport_channel()
 
     if mean_max_det is True:
         IJ.setTool("polygon")
@@ -618,7 +624,10 @@ while exit_loop == 0:
             channel_first = int(channel)
             IJ.setSlice(channel_first)
             # Data Collection
-            bck_int.append(low())  # background
+            if man_bck_det is True:
+            	bck_int=man_bck_list
+            else:
+            	bck_int.append(low())  # background
             mean_int.append(selection_mean())
             maximum_int.append(high(bit_depth))
         IJ.run("Select None")
@@ -782,12 +791,15 @@ while exit_loop == 0:
         headers = ['Cell', 'Cell Area', 'ch1_Background', 'ch1_avg', "ch1_Maximum", 'ch2_Background', 'ch2_avg',
                    'ch2_Maximum', 'ch3_Background', 'ch3_avg', "ch3_Maximum", 'ch4_Background', 'ch4_avg', "ch4_Maximum", "Image_title"]
         with open(Quant_MM, 'ab') as f_output_1:
-            csv_output = csv.DictWriter(f_output_1, fieldnames=headers)
-            f_output_1.seek(0, 2)
-            if f_output_1.tell() == 0:
-                csv_output.writeheader()
-            csv_output.writerow({'Cell': number, 'Cell Area': cell_area, 'ch1_Background': bck_int[0], 'ch1_avg': mean_int[0], 'ch1_Maximum': maximum_int[0], 'ch2_Background': bck_int[1], 'ch2_avg': mean_int[1], 'ch2_Maximum': maximum_int[
+        	csv_output = csv.DictWriter(f_output_1, fieldnames=headers)
+        	f_output_1.seek(0, 2)
+        	if f_output_1.tell() == 0:
+        		csv_output.writeheader()
+        	csv_output.writerow({'Cell': number, 'Cell Area': cell_area, 'ch1_Background': bck_int[0], 'ch1_avg': mean_int[0], 'ch1_Maximum': maximum_int[0], 'ch2_Background': bck_int[1], 'ch2_avg': mean_int[1], 'ch2_Maximum': maximum_int[
                                 1], 'ch3_Background': bck_int[2], 'ch3_avg': mean_int[2], 'ch3_Maximum': maximum_int[2], 'ch4_Background': bck_int[3], 'ch4_avg': mean_int[3], 'ch4_Maximum': maximum_int[3], 'Image_title': image_name})
+        	if man_bck_det is True: 
+        		bck_int.pop()
+        	
     else:
         pass
 
