@@ -3,7 +3,7 @@
 **Description:**<br>
 Determines a series of intensity data based upon regions of an image (ROIs). Principally, this assay calculates the ratio of maximum intensity over average intensity. This is useful for determine transport rates of synchronizeable cargo and gathering associated corollary data such as mean or max intensity of an ROI across multiple channels.  
 
-![image](Images/Transport_GUI.png)<br>
+<img src="Images/Transport_GUI.png" width=40% height=40%><br>
 
 **Image Folder:** location of the image file to be assayed. Assigned automatically. <br>
 **Processed Image Folder:** name of folder containing processed images. <br>
@@ -29,11 +29,10 @@ Determines a series of intensity data based upon regions of an image (ROIs). Pri
 **Manual Background Selection:** forces the user to manually assign a background value. If unchecked lowest pixel intensities will be assigned automatically.   <br>
 
 **ER-to-Golgi Transport Assay:** ER selection phase of selected ROI <br>
-
-![image](Images/Transport_1.png)<br>
+<img src="Images/Transport_1.png" width=40% height=40%><br>
 
 **ER-to-Golgi Transport Assay:** Transport Output csv <br>
-![image](Images/Transport_2.png)<br>
+<img src="Images/Transport_2.png" width=80% height=80%><br>
 **Cell:** ROI number assayed.<br>
 **AVG_Max:** average of the top .01% of pixels in selected ROI.<br>
 **bck_auto:** average of the bottom .1% of pixels in selected ROI.<br>
@@ -47,7 +46,7 @@ Determines a series of intensity data based upon regions of an image (ROIs). Pri
 **Image_title:** image that a particular ROI was derived from.<br> 
 
 **ER-to-Golgi Transport Assay:** Mean Max Output csv<br>
-![image](Images/Transport_3.png)<br>
+<img src="Images/Transport_3.png" width=80% height=80%><br>
 **Cell:** ROI number assayed.<br>
 **Cell Area:** area of selected ROI, determined by FIJI’s measure function.<br>
 **ch1_Background:** minimum of selected ROI in channel 1. Determined by FIJI’s measure function.<br>
