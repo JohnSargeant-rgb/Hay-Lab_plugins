@@ -1,7 +1,8 @@
 # File Mover:
 **Description:**
-Searches and copies a group of files, based on the file extension, from one directory to another. This is useful for aggregating all files from a specific experiment into one directory. 
-![](Images/Mover_Gui.png)
+Searches and copies a group of files, based on the file extension, from one directory to another. This is useful for aggregating all files from a specific experiment into one directory. <br>
+<img src="Images/Mover_Gui.png" width=40% height=40%><br>
+
 
 
 
@@ -14,8 +15,10 @@ Searches and copies a group of files, based on the file extension, from one dire
 
 
 **Pre-File Mover**<br />
-![](Images/Mover_1.png)
+<img src="Images/Mover_1.png" width=60% height=60%><br>
+
 
 **Post-File Mover**<br />
-![](Images/Mover_2.png)
+<img src="Images/Mover_2.png" width=60% height=60%><br>
+
 
