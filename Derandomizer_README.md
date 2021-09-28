@@ -9,7 +9,7 @@
 **Derandomize Image Folder:** if checked will derandomize files in the selected directory.<br>
 
 **Pre-File Derandomizer: Output from Transport Assay plugin:**<br>
-![image](Images/dz_1.png)<br>
+<img src="Images/dz_1.png" width=80% height=80%><br>
 **Post-File Derandomizer:**<br>
-![image](Images/dz_2.png)<br>
+<img src="Images/dz_2.png" width=80% height=80%><br>
 
