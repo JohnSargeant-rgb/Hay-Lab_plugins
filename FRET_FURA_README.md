@@ -3,7 +3,7 @@
 **FRET/FURA**<br>
 
 Description: Calculates the ratio of multiple user defined ROI’s from a dual channel hyperstack (width, height, channels and time frames). <br>
-<img src="Images/ff_gui.png" width=50% height=50%>
+<img src="Images/ff_gui.png" width=50% height=50%><br>
 **Output Location:** location of data output. <br>
 **Processed Folder:** name of folder containing processed image (saves ROI overlay).<br>
 **FRET FURA Outfile:** name of file containing ratio data for each ROI.<br>
