@@ -3,7 +3,7 @@
 **FRET/FURA**<br>
 
 Description: Calculates the ratio of multiple user defined ROI’s from a dual channel hyperstack (width, height, channels and time frames). <br>
-<img src="Images/ff_gui.png" width=50% height=50%><br>
+<img src="Images/ff_gui.png" width=40% height=40%><br>
 **Output Location:** location of data output. <br>
 **Processed Folder:** name of folder containing processed image (saves ROI overlay).<br>
 **FRET FURA Outfile:** name of file containing ratio data for each ROI.<br>
@@ -17,9 +17,10 @@ Description: Calculates the ratio of multiple user defined ROI’s from a dual c
 **Set Output file headers:** headers printed onto an csv file. <br>
 
 **FRET FURA: ROI selection phase** <br>
-![image](Images/ff_1.png)<br>
+<img src="Images/ff_1.png" width=40% height=40%><br>
 **FRET FURA: Output:**<br>
-![image](Images/ff_2.png)<br>
+<img src="Images/ff_2.png" width=70% height=70%><br>
+
 
 **Image_title:** image that all ROI’s were derived from. <br>
 **Time_min:** time in minutes after acquisition of repeating sets of dual channels.<br>
